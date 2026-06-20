@@ -1,0 +1,290 @@
+.books-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.page-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: white;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+}
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.form-select {
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: white;
+  font-size: 14px;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.form-select:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.scan-input-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--primary-light);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--primary-color);
+}
+
+.scan-icon {
+  font-size: 20px;
+}
+
+.scan-input {
+  flex: 1;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  background: white;
+}
+
+.scan-input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.book-title-cell {
+  color: var(--primary-color);
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.book-title-cell:hover {
+  text-decoration: underline;
+}
+
+.book-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-item label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.form-input {
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  color: var(--text-primary);
+  background: white;
+}
+
+.form-input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.form-textarea {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  color: var(--text-primary);
+  resize: vertical;
+  font-family: inherit;
+}
+
+.form-textarea:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.book-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.detail-header {
+  display: flex;
+  gap: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.book-cover {
+  width: 120px;
+  height: 160px;
+  background: var(--bg-tertiary);
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cover-placeholder {
+  font-size: 48px;
+}
+
+.book-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.book-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.book-author {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.book-status-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.stock-info {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.detail-item {
+  display: flex;
+  font-size: 14px;
+}
+
+.detail-label {
+  color: var(--text-secondary);
+  min-width: 80px;
+}
+
+.detail-value {
+  color: var(--text-primary);
+}
+
+.detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detail-section h4 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.detail-description {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.empty-text {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.reservation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.reservation-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--bg-primary);
+  border-radius: var(--border-radius);
+}
+
+.queue-badge {
+  width: 24px;
+  height: 24px;
+  background: var(--primary-color);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.reservation-name {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.reservation-card {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.reservation-date {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-size: 13px;
+}
