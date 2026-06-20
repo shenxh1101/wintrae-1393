@@ -8,12 +8,6 @@ import Badge from '../components/Badge'
 import Modal from '../components/Modal'
 import './Books.css'
 
-declare global {
-  interface Window {
-    api: any
-  }
-}
-
 function Books() {
   const [books, setBooks] = useState<Book[]>([])
   const [total, setTotal] = useState(0)

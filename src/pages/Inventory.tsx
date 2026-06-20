@@ -7,12 +7,6 @@ import Badge from '../components/Badge'
 import Modal from '../components/Modal'
 import './Inventory.css'
 
-declare global {
-  interface Window {
-    api: any
-  }
-}
-
 type SubTab = 'list' | 'damage'
 
 function InventoryPage() {
@@ -61,6 +55,8 @@ function InventoryPage() {
     description: '',
     handler: '',
   })
+  const [damageSubmitting, setDamageSubmitting] = useState(false)
+  const [damageFormError, setDamageFormError] = useState('')
 
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
@@ -241,18 +237,47 @@ function InventoryPage() {
 
   // 损坏登记相关
   const handleDamageBook = async () => {
+    setDamageFormError('')
+
     if (!damageForm.book_barcode.trim()) {
-      alert('请扫描或输入图书条码')
+      setDamageFormError('请输入图书条码')
       return
     }
     if (!damageForm.description.trim()) {
-      alert('请输入损坏描述')
+      setDamageFormError('请输入损坏描述')
       return
     }
 
+    setDamageSubmitting(true)
+
     try {
+      let bookId = damageForm.book_id
+      let bookTitle = damageForm.book_title
+
+      if (!bookId || bookId === 0) {
+        let book = await window.api.books.getByBarcode(damageForm.book_barcode.trim())
+        if (!book) {
+          const result = await window.api.books.getList({ keyword: damageForm.book_barcode.trim(), pageSize: 1 })
+          if (result.list.length > 0) {
+            book = result.list[0]
+          }
+        }
+        if (!book) {
+          setDamageFormError('未找到该图书，请检查条码后重新输入')
+          setDamageSubmitting(false)
+          return
+        }
+        bookId = book.id
+        bookTitle = book.title
+        setDamageForm({
+          ...damageForm,
+          book_id: book.id,
+          book_title: book.title,
+        })
+      }
+
       const result = await window.api.damages.report(
-        damageForm.book_id,
+        bookId,
         damageForm.damage_level,
         damageForm.description,
         damageForm.handler
@@ -260,14 +285,24 @@ function InventoryPage() {
       if (result.success) {
         showMessage('success', '登记成功')
         setDamageModalOpen(false)
+        setDamageForm({
+          book_barcode: '',
+          book_title: '',
+          book_id: 0,
+          damage_level: 'minor',
+          description: '',
+          handler: '',
+        })
+        setDamageFormError('')
         loadDamages()
       } else {
-        showMessage('error', result.message)
+        setDamageFormError(result.message)
       }
     } catch (error) {
       console.error('损坏登记失败:', error)
-      showMessage('error', '登记失败')
+      setDamageFormError('登记失败，请稍后重试')
     }
+    setDamageSubmitting(false)
   }
 
   const handleDamageBookScan = async (barcode: string) => {
@@ -748,19 +783,27 @@ function InventoryPage() {
         onClose={() => setDamageModalOpen(false)}
         onOk={handleDamageBook}
         width={520}
+        loading={damageSubmitting}
       >
         <div className="damage-form">
+          {damageFormError && (
+            <div className="form-error-tip">
+              <span className="error-icon">⚠️</span>
+              {damageFormError}
+            </div>
+          )}
           <div className="form-item">
             <label>图书条码 *</label>
             <input
               type="text"
               value={damageForm.book_barcode}
               onChange={(e) => {
-                setDamageForm({ ...damageForm, book_barcode: e.target.value })
+                setDamageForm({ ...damageForm, book_barcode: e.target.value, book_id: 0, book_title: '' })
+                setDamageFormError('')
               }}
               onKeyDown={(e) => e.key === 'Enter' && handleDamageBookScan(damageForm.book_barcode)}
               className="form-input"
-              placeholder="扫描或输入条码后按回车"
+              placeholder="请输入图书条码，按回车或点确定查询"
             />
           </div>
           {damageForm.book_title && (
@@ -785,7 +828,10 @@ function InventoryPage() {
             <label>损坏描述 *</label>
             <textarea
               value={damageForm.description}
-              onChange={(e) => setDamageForm({ ...damageForm, description: e.target.value })}
+              onChange={(e) => {
+                setDamageForm({ ...damageForm, description: e.target.value })
+                setDamageFormError('')
+              }}
               className="form-textarea"
               rows={3}
               placeholder="请描述图书的损坏情况"

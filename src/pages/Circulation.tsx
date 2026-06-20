@@ -6,12 +6,6 @@ import DataTable from '../components/DataTable'
 import Modal from '../components/Modal'
 import './Circulation.css'
 
-declare global {
-  interface Window {
-    api: any
-  }
-}
-
 type TabType = 'borrow' | 'return' | 'overdue' | 'reservation'
 
 function Circulation() {
@@ -36,6 +30,9 @@ function Circulation() {
   // 预约列表
   const [reservationList, setReservationList] = useState<Reservation[]>([])
   const [reservationLoading, setReservationLoading] = useState(false)
+  const [reserveReaderNo, setReserveReaderNo] = useState('')
+  const [reserveBookBarcode, setReserveBookBarcode] = useState('')
+  const [reserving, setReserving] = useState(false)
 
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [confirmModal, setConfirmModal] = useState<{
@@ -278,7 +275,7 @@ function Circulation() {
     try {
       const result = await window.api.reservations.cancel(id)
       if (result.success) {
-        showMessage('success', '取消成功')
+        showMessage('success', '取消成功，排位已自动顺延')
         loadReservationList()
       } else {
         showMessage('error', result.message)
@@ -287,6 +284,60 @@ function Circulation() {
       console.error('取消预约失败:', error)
       showMessage('error', '取消失败')
     }
+  }
+
+  const handleAddReservation = async () => {
+    if (!reserveReaderNo.trim()) {
+      showMessage('error', '请输入读者证号')
+      return
+    }
+    if (!reserveBookBarcode.trim()) {
+      showMessage('error', '请输入图书条码')
+      return
+    }
+
+    setReserving(true)
+    try {
+      let reader = await window.api.readers.getByCardNo(reserveReaderNo.trim())
+      if (!reader) {
+        const result = await window.api.readers.getList({ keyword: reserveReaderNo.trim(), pageSize: 1 })
+        if (result.list.length > 0) {
+          reader = result.list[0]
+        }
+      }
+      if (!reader) {
+        showMessage('error', '未找到该读者')
+        setReserving(false)
+        return
+      }
+
+      let book = await window.api.books.getByBarcode(reserveBookBarcode.trim())
+      if (!book) {
+        const result = await window.api.books.getList({ keyword: reserveBookBarcode.trim(), pageSize: 1 })
+        if (result.list.length > 0) {
+          book = result.list[0]
+        }
+      }
+      if (!book) {
+        showMessage('error', '未找到该图书')
+        setReserving(false)
+        return
+      }
+
+      const result = await window.api.reservations.add(book.id, reader.id)
+      if (result.success) {
+        showMessage('success', result.message)
+        setReserveReaderNo('')
+        setReserveBookBarcode('')
+        loadReservationList()
+      } else {
+        showMessage('error', result.message)
+      }
+    } catch (error) {
+      console.error('预约失败:', error)
+      showMessage('error', '预约失败')
+    }
+    setReserving(false)
   }
 
   const tabs = [
@@ -644,9 +695,48 @@ function Circulation() {
       {activeTab === 'reservation' && (
         <div className="circulation-panel">
           <div className="section-header">
-            <div className="section-title">预约排队列表</div>
+            <div className="section-title">预约排队</div>
             <Badge variant="primary">{reservationList.length} 个预约</Badge>
           </div>
+
+          <div className="reservation-form">
+            <div className="form-row">
+              <div className="form-item">
+                <label>读者证号</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  placeholder="请输入读者证号"
+                  value={reserveReaderNo}
+                  onChange={(e) => setReserveReaderNo(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleAddReservation()}
+                />
+              </div>
+              <div className="form-item">
+                <label>图书条码</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  placeholder="请输入图书条码"
+                  value={reserveBookBarcode}
+                  onChange={(e) => setReserveBookBarcode(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleAddReservation()}
+                />
+              </div>
+              <div className="form-item form-item-btn">
+                <label>&nbsp;</label>
+                <Button
+                  variant="primary"
+                  onClick={handleAddReservation}
+                  disabled={reserving}
+                  icon="+"
+                >
+                  {reserving ? '处理中...' : '添加预约'}
+                </Button>
+              </div>
+            </div>
+          </div>
+
           <DataTable
             columns={reservationColumns}
             data={reservationList}

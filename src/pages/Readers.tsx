@@ -8,12 +8,6 @@ import Badge from '../components/Badge'
 import Modal from '../components/Modal'
 import './Readers.css'
 
-declare global {
-  interface Window {
-    api: any
-  }
-}
-
 function Readers() {
   const [readers, setReaders] = useState<Reader[]>([])
   const [total, setTotal] = useState(0)

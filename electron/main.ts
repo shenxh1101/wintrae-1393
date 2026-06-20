@@ -7,6 +7,7 @@ import { seedSampleData } from './seed'
 let mainWindow: BrowserWindow | null = null
 
 const isDev = process.env.NODE_ENV === 'development'
+const devPort = process.env.VITE_DEV_PORT ? Number(process.env.VITE_DEV_PORT) : 5173
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -24,7 +25,7 @@ function createWindow() {
   })
 
   if (isDev) {
-    mainWindow.loadURL('http://localhost:5174')
+    mainWindow.loadURL(`http://localhost:${devPort}`)
     mainWindow.webContents.openDevTools()
   } else {
     mainWindow.loadFile(path.join(__dirname, '../dist/index.html'))

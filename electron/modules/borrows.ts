@@ -1,6 +1,16 @@
 import { loadDb, saveDb, getNextId, paginate } from '../db'
-import type { Borrow } from '../db'
+import type { Borrow, Book } from '../db'
 import dayjs from 'dayjs'
+
+function updateBookStatusByCopies(book: Book) {
+  if (book.status === 'available' || book.status === 'borrowed' || book.status === 'reserved') {
+    if (book.available_copies > 0) {
+      book.status = 'available'
+    } else {
+      book.status = 'borrowed'
+    }
+  }
+}
 
 export interface BorrowWithDetails extends Borrow {
   book_title?: string
@@ -57,6 +67,7 @@ export function borrowBook(bookId: number, readerId: number): { success: boolean
 
   db.borrows.push(newBorrow)
   book.available_copies--
+  updateBookStatusByCopies(book)
 
   saveDb()
 
@@ -88,6 +99,7 @@ export function returnBook(borrowId: number): { success: boolean; message: strin
   const book = db.books.find(b => b.id === borrow.book_id)
   if (book) {
     book.available_copies++
+    updateBookStatusByCopies(book)
   }
 
   saveDb()

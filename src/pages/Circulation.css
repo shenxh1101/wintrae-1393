@@ -382,3 +382,49 @@
   display: flex;
   gap: 6px;
 }
+
+.reservation-form {
+  padding: 16px;
+  background: var(--bg-primary);
+  border-radius: var(--border-radius);
+}
+
+.reservation-form .form-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.reservation-form .form-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.reservation-form .form-item-btn {
+  flex: 0 0 auto;
+}
+
+.reservation-form label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.reservation-form .form-input {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  background: white;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.reservation-form .form-input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--primary-light);
+}

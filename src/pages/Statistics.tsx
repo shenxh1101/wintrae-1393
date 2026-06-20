@@ -6,12 +6,6 @@ import Button from '../components/Button'
 import Modal from '../components/Modal'
 import './Statistics.css'
 
-declare global {
-  interface Window {
-    api: any
-  }
-}
-
 type SubTab = 'overview' | 'templates' | 'export'
 
 function Statistics() {
